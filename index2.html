@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RX Studio360 - Start Page</title>
+    <link href="/2.png" rel="fav-icon">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-image:url(circuitpattern.png);
+            background-size: cover;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        .header {
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+
+        .logo::before {
+            content: 'Rx';
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, rgba(0, 0, 0, 0.63), rgba(0, 0, 0, 0.69));
+            border-radius: 50%;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgb(15, 149, 194);
+            border: 1px solid rgb(15, 149, 194);
+        }
+
+        a{
+            text-decoration: none;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .nav-menu li {
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-menu li:hover {
+            background: rgba(0, 188, 212, 0.2);
+            transform: translateY(-2px);
+            border-color: rgba(0, 188, 212, 0.5);
+            box-shadow: 0 4px 15px rgba(0, 188, 212, 0.3);
+        }
+
+        .nav-menu li:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(0, 188, 212, 0.4);
+        }
+
+        /* Main Content */
+        .main-content {
+            text-align: center;
+            padding: 80px 0;
+        }
+
+        .main-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+            line-height: 1.1;
+        }
+
+        .subtitle {
+            font-size: 1.8rem;
+            font-weight: 400;
+            margin-bottom: 60px;
+            color: #e2e8f0;
+            letter-spacing: 1px;
+        }
+
+        /* Cards Container */
+        .cards-container {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #11bbd1 0%, #11a9ba 100%);
+            border-radius: 20px;
+            padding: 40px 30px;
+            width: 320px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 188, 212, 0.3);
+            height: 400px;
+        }
+
+        .card:hover {
+            transform: translateY(-15px) scale(1.05);
+            box-shadow: 0 20px 50px rgba(0, 188, 212, 0.5);
+        }
+
+        .card-title {
+            font-size: 2.0rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #f9fbff;
+            text-decoration: underline, bold;
+            text-underline-offset: 8px;
+            text-decoration-thickness: 3px;
+            letter-spacing: 0.15px;
+        }
+
+        .card-description {
+            font-size: 1.25rem;
+            line-height: 1.6;
+            color: #1a2332;
+            font-weight: 500;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-menu {
+                gap: 15px;
+            }
+
+            .nav-menu li {
+                padding: 6px 12px;
+                font-size: 14px;
+            }
+
+            .main-title {
+                font-size: 2.5rem;
+            }
+
+            .subtitle {
+                font-size: 1.4rem;
+            }
+
+            .cards-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+
+            .card {
+                width: 100%;
+                max-width: 350px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 15px;
+            }
+
+            .main-title {
+                font-size: 2rem;
+            }
+
+            .subtitle {
+                font-size: 1.2rem;
+            }
+
+            .card {
+                padding: 30px 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <div class="logo">
+                    <!-- <span class="logo-1"> RX</span> -->
+                    
+                    <span class="logo-2">Studio360</span>
+                </div>
+                <ul class="nav-menu">
+                    <li onclick="handleNavClick('home')">HOME</li>
+                    <li onclick="handleNavClick('about')">ABOUT</li>
+                    <li onclick="handleNavClick('tools')">TOOLS</li>
+                    <li onclick="handleNavClick('socials')">SOCIALS</li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <h1 class="main-title">Where do you want to start?</h1>
+            <p class="subtitle">Simulate, Design, Launch!</p>
+            
+            <a href="/packagingnfinal.html">
+            <div class="cards-container"> 
+                               <div class="card" onclick="handleCardClick('3d-packaging')">
+                    <h2 class="card-title">3D PACKAGING DESIGNING</h2>
+                    <p class="card-description">
+                        Create and personalize your own medicine packaging with options for QR codes, braille, and custom uploads along with AI Assistance.
+                    </p>
+                
+                </div></a>
+
+                <a href="/ADME-module.html">
+                <div class="card" onclick="handleCardClick('adme-model')">
+                    
+                    <h2 class="card-title">ADME MODEL SIMULATION</h2>
+                    <p class="card-description">
+                        AI-driven predictive insights with dynamic graphs and advanced simulation models tailored to individual patient needs.
+                    </p>
+                
+                </div></a>
+ 
+                <a href="/Tablet-design.html">
+                <div class="card" onclick="handleCardClick('dosage-form')">
+                   
+                    <h2 class="card-title">DOSAGE FORM DESIGNING</h2>
+                    <p class="card-description">
+                        Design and customize tablets with unique shapes and styles. Get AI-powered suggestions to make them visually appealing.
+                    </p>
+                
+                </div></a>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Navigation click handler
+        function handleNavClick(section) {
+            console.log(`Navigating to: ${section}`);
+            // Add your navigation logic here
+            // Example: window.location.href = `/${section}`;
+        }
+
+        // Card click handler
+        function handleCardClick(cardType) {
+            console.log(`Opening: ${cardType}`);
+            // Add your card navigation logic here
+            // Example: window.location.href = `/tools/${cardType}`;
+        }
+
+        // Enhanced cursor tracking for cards
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const rotateX = (y - centerY) / 10;
+                const rotateY = (centerX - x) / 10;
+                
+                card.style.transform = `translateY(-15px) scale(1.05) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0) scale(1) rotateX(0) rotateY(0)';
+            });
+        });
+
+        // Add subtle parallax effect to background
+        document.addEventListener('mousemove', (e) => {
+            const mouseX = e.clientX / window.innerWidth;
+            const mouseY = e.clientY / window.innerHeight;
+            
+            document.body.style.backgroundPosition = `${mouseX * 20}px ${mouseY * 20}px`;
+        });
+    </script>
+</body>
+</html>

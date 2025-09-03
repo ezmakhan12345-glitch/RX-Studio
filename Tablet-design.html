@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tablet Engraving Visualizer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: url("/circuitpattern.png") center center / cover no-repeat;
+            color: #111;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .grid-bg {
+            background-image: linear-gradient(#bfc7d1 1px, transparent 1px), linear-gradient(90deg, #bfc7d1 1px, transparent 1px);
+            background-size: 22px 22px;
+        }
+        
+        .corner-accent {
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            background-color: #0eb8db;
+            border-radius: 0 0 70px 0;
+        }
+        
+        .corner-accent.top-left {
+            left: -35px;
+            top: -25px;
+            transform: rotate(90deg);
+        }
+        
+        .corner-accent.bottom-right {
+            right: -35px;
+            bottom: -25px;
+            transform: rotate(-90deg);
+        }
+        
+        .color-swatch {
+            width: 24px;
+            height: 24px;
+            border: 2px solid black;
+            border-radius: 6px;
+            cursor: pointer;
+            box-shadow: 0 2px 0 #000;
+            transition: all 0.2s;
+        }
+        
+        .color-swatch.selected {
+            outline: 3px solid #0eb8db;
+        }
+        
+        .icon-button {
+            font-size: 20px;
+            cursor: pointer;
+            padding: 6px 10px;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        
+        .icon-button:hover {
+            background-color: #e5e7eb;
+        }
+        
+        .icon-button.selected {
+            border-color: #3b82f6;
+            background-color: #dbeafe;
+        }
+        
+        select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+        
+        .dropdown-arrow {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen" style="font-family: 'Segoe UI', Arial, sans-serif; background: url('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Landing%20page%20-S1zGhYU7DxCs3DCe74KRTaKK27ML7I.png') center center / cover no-repeat; color: #111;">
+        <div class="relative border-t-2 border-b-2 border-black grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-10 items-center p-9 bg-white">
+            <!-- Corner accents -->
+            <div class="absolute w-[70px] h-[70px] bg-[#0eb8db] rounded-br-[70px] -left-[35px] -top-[25px] rotate-90"></div>
+            <div class="absolute w-[70px] h-[70px] bg-[#0eb8db] rounded-br-[70px] -right-[35px] -bottom-[25px] -rotate-90"></div>
+
+            <!-- Added download button in top right corner -->
+            <button 
+                id="downloadBtn" 
+                onclick="downloadTabletImage()"
+                class="absolute top-4 right-4 bg-[#0eb8db] text-white px-4 py-2 rounded-md border-2 border-black font-semibold text-sm hover:bg-[#0ca8c8] transition-colors shadow-[0_2px_0_#000]"
+            >
+                Download Image
+            </button>
+
+            <!-- Tablet Preview -->
+            <div class="flex items-center justify-center min-h-[360px] border border-black aspect-[1.2/1]" style="background-image: linear-gradient(#bfc7d1 1px, transparent 1px), linear-gradient(90deg, #bfc7d1 1px, transparent 1px); background-size: 22px 22px;">
+                <svg viewBox="0 0 300 300" width="320" role="img" aria-label="Tablet preview" id="tabletSvg">
+                    <defs>
+                        <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+                            <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#000" flood-opacity="0.25" />
+                        </filter>
+                        <radialGradient id="face" cx="40%" cy="35%" r="70%">
+                            <stop offset="0%" stop-color="#ffffff" />
+                            <stop offset="60%" stop-color="#ffffff" id="faceColor1" />
+                            <stop offset="100%" stop-color="#ffffff" id="faceColor2" />
+                        </radialGradient>
+                        <linearGradient id="rim" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#ffffff" />
+                            <stop offset="100%" stop-color="#cfd6de" />
+                        </linearGradient>
+                    </defs>
+                    <g filter="url(#shadow)" id="tabletGroup">
+                         Tablet shape will be rendered here 
+                    </g>
+                </svg>
+            </div>
+
+            <!-- Controls Panel -->
+            <div class="w-full max-w-[420px] space-y-3">
+                <!-- Tablet Type -->
+                <div>
+                    <label class="block text-xs font-semibold tracking-wider mb-1.5 uppercase">Type of Tablet</label>
+                    <div class="relative border-2 border-black rounded-sm overflow-hidden h-10">
+                        <select id="tabletType" class="appearance-none border-0 bg-white w-full h-full px-3 pr-10 text-sm cursor-pointer">
+                            <option value="LOZENGE">LOZENGE</option>
+                            <option value="ORAL TABLET" selected>ORAL TABLET</option>
+                            <option value="SUBLINGUAL TABLETS">SUBLINGUAL TABLETS</option>
+                            <option value="THIN FILM TABLET">THIN FILM TABLET</option>
+                        </select>
+                        <div class="absolute right-2.5 top-1/2 -translate-y-1/2 text-base pointer-events-none">▾</div>
+                    </div>
+                </div>
+
+                <!-- Icon Selector -->
+                <div>
+                    <label class="block text-xs font-semibold tracking-wider mb-1.5 uppercase">Choose Icon</label>
+                    <div class="flex gap-2.5 flex-wrap" id="iconSelector">
+                        <span class="icon-button" data-icon="❤️">❤️</span>
+                        <span class="icon-button" data-icon="🦇">🦇</span>
+                        <span class="icon-button" data-icon="🧸">🧸</span>
+                        <span class="icon-button" data-icon="👍">👍</span>
+                        <span class="icon-button" data-icon="🎀">🎀</span>
+                        <span class="icon-button" data-icon="😈">😈</span>
+                        <span class="icon-button" data-icon="🤡">🤡</span>
+                    </div>
+                </div>
+
+                <!-- Tablet Shape -->
+                <div>
+                    <label class="block text-xs font-semibold tracking-wider mb-1.5 uppercase">Choose Your Shape</label>
+                    <div class="relative border-2 border-black rounded-sm overflow-hidden h-10">
+                        <select id="tabletShape" class="appearance-none border-0 bg-white w-full h-full px-3 pr-10 text-sm cursor-pointer">
+                            <option value="ROUND" selected>ROUND</option>
+                            <option value="OVAL">OVAL</option>
+                            <option value="SQUARE">SQUARE</option>
+                        </select>
+                        <div class="absolute right-2.5 top-1/2 -translate-y-1/2 text-base pointer-events-none">▾</div>
+                    </div>
+                </div>
+
+                <!-- Tablet Size -->
+                <div>
+                    <label class="block text-xs font-semibold tracking-wider mb-1.5 uppercase">Choose Your Size (mm)</label>
+                    <div class="relative border-2 border-black rounded-sm overflow-hidden h-10">
+                        <select id="tabletSize" class="appearance-none border-0 bg-white w-full h-full px-3 pr-10 text-sm cursor-pointer">
+                            <option value="8">8</option>
+                            <option value="10" selected>10</option>
+                            <option value="12">12</option>
+                            <option value="14">14</option>
+                        </select>
+                        <div class="absolute right-2.5 top-1/2 -translate-y-1/2 text-base pointer-events-none">▾</div>
+                    </div>
+                </div>
+
+                <!-- Engraving -->
+                <div>
+                    <label class="block text-xs font-semibold tracking-wider mb-1.5 uppercase">Choose Your Engraving</label>
+                    <div class="flex items-center gap-2">
+                        <div class="relative border-2 border-black rounded-sm overflow-hidden h-10 flex-1">
+                            <select id="tabletEngraving" class="appearance-none border-0 bg-white w-full h-full px-3 pr-10 text-sm cursor-pointer">
+                                <option value="NONE" selected>NONE</option>
+                                <option value="DEBOSSED" id="debossedOption">DEBOSSED</option>
+                                <option value="LOGO">LOGO</option>
+                                <option value="TEXT">TEXT</option>
+                            </select>
+                            <div class="absolute right-2.5 top-1/2 -translate-y-1/2 text-base pointer-events-none">▾</div>
+                        </div>
+                        <label id="logoUploadBtn" class="cursor-pointer bg-gray-100 border-2 border-black rounded-sm p-2 transition-colors hover:bg-gray-200" style="display: none;">
+                            <input type="file" accept="image/*" id="logoUpload" class="hidden" />
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <polyline points="7,10 12,15 17,10" />
+                                <line x1="12" y1="15" x2="12" y2="3" />
+                            </svg>
+                        </label>
+                    </div>
+                    <div id="textInputContainer" class="mt-2.5" style="display: none;">
+                        <input
+                            type="text"
+                            id="customText"
+                            placeholder="Enter text (max 5 words)"
+                            maxlength="50"
+                            class="w-full p-2 border border-gray-300 rounded text-sm"
+                        />
+                        <div class="text-xs text-gray-600 mt-1" id="wordCount">0/5 words</div>
+                    </div>
+                </div>
+
+                <!-- Color Palette -->
+                <div>
+                    <label class="block text-xs font-semibold tracking-wider mb-1.5 uppercase">Colour of Tablet</label>
+                    <div class="flex gap-2 flex-wrap items-center" id="colorPalette">
+                         Colors will be populated by JavaScript 
+                    </div>
+                </div>
+
+                <!-- Bioavailability -->
+                <div>
+                    <label class="block text-xs font-semibold tracking-wider mb-1.5 uppercase">Bioavailability</label>
+                    <div class="h-4 border-2 border-black rounded-2xl relative bg-white overflow-hidden">
+                        <div id="bioavailabilityBar" class="absolute top-0 left-0 h-full bg-gradient-to-r from-gray-700 to-gray-700 transition-all duration-200" style="width: 50%;"></div>
+                        <div class="absolute inset-0 flex items-center justify-center text-xs font-bold text-white" id="bioavailabilityText">50%</div>
+                    </div>
+                </div>
+
+                <!-- Excipient Search -->
+                <div>
+                    <label class="block text-xs font-semibold tracking-wider mb-1.5 uppercase">Find Your Excipient</label>
+                    <input
+                        type="text"
+                        id="searchInput"
+                        placeholder="Type dosage form (e.g., Capsules)"
+                        class="w-full p-2.5 text-sm border-2 border-black rounded"
+                    />
+                </div>
+
+                <!-- Excipient Results -->
+                <div id="excipientResults" style="display: none;">
+                     Results will be populated by JavaScript 
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State object
+        const state = {
+            tabletType: "ORAL TABLET",
+            tabletShape: "ROUND",
+            tabletSize: "10",
+            tabletEngraving: "NONE",
+            selectedColor: "#ffffff",
+            bioavailability: 50,
+            searchInput: "",
+            showMoreColors: false,
+            uploadedLogo: null,
+            selectedIcon: null,
+            customText: ""
+        };
+
+        // Color palette
+        const colors = [
+            { hex: "#ffffff", label: "White" },
+            { hex: "#e4eefc", label: "Pale Blue" },
+            { hex: "#ffd6d6", label: "Pink" },
+            { hex: "#d8ffd8", label: "Mint" },
+            { hex: "#ffe8b3", label: "Cream" },
+            { hex: "#f5f5f5", label: "Grey White" },
+            { hex: "#c9d8ff", label: "Light Indigo" },
+            { hex: "#ffb3ba", label: "Light Pink" },
+            { hex: "#bae1ff", label: "Baby Blue" },
+            { hex: "#baffc9", label: "Light Green" },
+            { hex: "#ffffba", label: "Light Yellow" },
+            { hex: "#ffdfba", label: "Peach" },
+            { hex: "#e0bbff", label: "Lavender" },
+            { hex: "#ff9999", label: "Coral" },
+            { hex: "#87ceeb", label: "Sky Blue" },
+            { hex: "#98fb98", label: "Pale Green" },
+            { hex: "#f0e68c", label: "Khaki" },
+            { hex: "#dda0dd", label: "Plum" },
+            { hex: "#ffc0cb", label: "Pink" }
+        ];
+
+        // Excipient data
+        const excipientData = {
+            capsules: {
+                title: "Capsules",
+                items: [
+                    { name: "Gelatin", benefit: "Forms the capsule shell, easy to swallow, dissolves quickly", cost: "PKR 5,000–9,000/kg" },
+                    { name: "HPMC", benefit: "Plant-based capsule shell, suitable for vegetarians, stable in humidity", cost: "PKR 9,000–15,000/kg" },
+                    { name: "Magnesium Stearate", benefit: "Lubricant that ensures smooth manufacturing and capsule release", cost: "PKR 1,000–2,500/kg" },
+                    { name: "Microcrystalline Cellulose", benefit: "Used as a filler and binder, offers good compressibility and flow", cost: "PKR 800–1,500/kg" }
+                ]
+            },
+            lozenges: {
+                title: "Lozenges",
+                items: [
+                    { name: "Sucrose / Sugar Alcohols", benefit: "Sweet base, improves taste and mouthfeel", cost: "PKR 600–1,500/kg" },
+                    { name: "Gums", benefit: "Provide texture and controlled release", cost: "PKR 1,500–4,000/kg" },
+                    { name: "Flavoring Agents", benefit: "Improve taste and compliance", cost: "PKR 2,500–20,000+/kg" },
+                    { name: "Colorants", benefit: "Enhance appearance and branding", cost: "PKR 2,000–25,000+/kg" }
+                ]
+            },
+            sublingual: {
+                title: "Sublingual Tablets",
+                items: [
+                    { name: "Mannitol", benefit: "Fast-dissolving filler with cooling", cost: "PKR 800–1,500/kg" },
+                    { name: "Lactose", benefit: "Common diluent, soluble", cost: "PKR 500–1,000/kg" },
+                    { name: "Crospovidone / Croscarmellose Sodium", benefit: "Superdisintegrants for rapid action", cost: "PKR 1,500–3,000/kg" },
+                    { name: "Magnesium Stearate", benefit: "Lubricant for tablet ejection", cost: "PKR 1,000–2,500/kg" }
+                ]
+            },
+            oral: {
+                title: "Oral Tablets",
+                items: [
+                    { name: "Microcrystalline Cellulose", benefit: "Excellent compressibility", cost: "PKR 800–1,500/kg" },
+                    { name: "Dicalcium Phosphate", benefit: "Cheap, compressible filler", cost: "PKR 300–800/kg" },
+                    { name: "Starch / Modified Starch", benefit: "Disintegrant", cost: "PKR 400–1,000/kg" },
+                    { name: "Povidone (PVP)", benefit: "Improves cohesion and strength", cost: "PKR 2,000–4,500/kg" },
+                    { name: "Talc", benefit: "Enhances powder flow", cost: "Under PKR 300/kg" }
+                ]
+            },
+            thinfilm: {
+                title: "Thin Film Tablets",
+                items: [
+                    { name: "Pullulan", benefit: "Natural polymer for film formation, fast dissolving", cost: "PKR 8,000–15,000/kg" },
+                    { name: "HPMC", benefit: "Film-forming agent, controls dissolution rate", cost: "PKR 9,000–15,000/kg" },
+                    { name: "Glycerin", benefit: "Plasticizer for flexibility and smooth texture", cost: "PKR 800–1,500/kg" },
+                    { name: "Mannitol", benefit: "Sweetener and bulking agent, fast dissolving", cost: "PKR 800–1,500/kg" }
+                ]
+            }
+        };
+
+        // Initialize the app
+        function init() {
+            setupEventListeners();
+            renderColorPalette();
+            updateTabletVisualization();
+            updateBioavailability();
+        }
+
+        function setupEventListeners() {
+            // Tablet type change
+            document.getElementById('tabletType').addEventListener('change', function(e) {
+                state.tabletType = e.target.value;
+                updateEngravingOptions();
+                updateBioavailability();
+                updateTabletVisualization();
+            });
+
+            // Icon selection
+            document.getElementById('iconSelector').addEventListener('click', function(e) {
+                if (e.target.classList.contains('icon-button')) {
+                    // Remove previous selection
+                    document.querySelectorAll('.icon-button').forEach(btn => btn.classList.remove('selected'));
+                    // Add selection to clicked icon
+                    e.target.classList.add('selected');
+                    state.selectedIcon = e.target.dataset.icon;
+                    updateTabletVisualization();
+                }
+            });
+
+            // Tablet shape change
+            document.getElementById('tabletShape').addEventListener('change', function(e) {
+                state.tabletShape = e.target.value;
+                updateTabletVisualization();
+            });
+
+            // Tablet size change
+            document.getElementById('tabletSize').addEventListener('change', function(e) {
+                state.tabletSize = e.target.value;
+                updateTabletVisualization();
+            });
+
+            // Engraving change
+            document.getElementById('tabletEngraving').addEventListener('change', function(e) {
+                state.tabletEngraving = e.target.value;
+                toggleEngravingInputs();
+                updateTabletVisualization();
+            });
+
+            // Custom text input
+            document.getElementById('customText').addEventListener('input', function(e) {
+                handleCustomTextChange(e.target.value);
+            });
+
+            // Logo upload
+            document.getElementById('logoUpload').addEventListener('change', function(e) {
+                handleLogoUpload(e);
+            });
+
+            // Search input
+            document.getElementById('searchInput').addEventListener('input', function(e) {
+                state.searchInput = e.target.value;
+                updateExcipientResults();
+            });
+        }
+
+        function renderColorPalette() {
+            const palette = document.getElementById('colorPalette');
+            const visibleColors = state.showMoreColors ? colors : colors.slice(0, 7);
+            
+            palette.innerHTML = '';
+            
+            visibleColors.forEach(color => {
+                const swatch = document.createElement('div');
+                swatch.className = `w-6 h-6 border-2 border-black rounded-md cursor-pointer shadow-[0_2px_0_#000] transition-all ${
+                    state.selectedColor === color.hex ? 'outline outline-3 outline-[#0eb8db]' : ''
+                }`;
+                swatch.style.backgroundColor = color.hex;
+                swatch.title = color.label;
+                swatch.addEventListener('click', () => {
+                    state.selectedColor = color.hex;
+                    renderColorPalette();
+                    updateTabletVisualization();
+                });
+                palette.appendChild(swatch);
+            });
+
+            if (!state.showMoreColors) {
+                const moreBtn = document.createElement('div');
+                moreBtn.className = 'w-6 h-6 border-2 border-black rounded-md cursor-pointer bg-gray-100 flex items-center justify-center text-xs font-bold transition-colors hover:bg-gray-200';
+                moreBtn.textContent = '+';
+                moreBtn.addEventListener('click', () => {
+                    state.showMoreColors = true;
+                    renderColorPalette();
+                });
+                palette.appendChild(moreBtn);
+            }
+        }
+
+        function toggleEngravingInputs() {
+            const textContainer = document.getElementById('textInputContainer');
+            const logoBtn = document.getElementById('logoUploadBtn');
+            
+            textContainer.style.display = state.tabletEngraving === 'TEXT' ? 'block' : 'none';
+            logoBtn.style.display = state.tabletEngraving === 'LOGO' ? 'block' : 'none';
+        }
+
+        function handleCustomTextChange(value) {
+            const words = value.trim().split(/\s+/).filter(word => word.length > 0);
+            const wordCount = words.length;
+
+            if (wordCount > 5) {
+                const limitedText = words.slice(0, 5).join(' ');
+                state.customText = limitedText;
+                document.getElementById('customText').value = limitedText;
+                document.getElementById('wordCount').textContent = '5/5 words';
+            } else {
+                state.customText = value;
+                document.getElementById('wordCount').textContent = `${wordCount}/5 words`;
+            }
+            
+            updateTabletVisualization();
+        }
+
+        function handleLogoUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    state.uploadedLogo = e.target.result;
+                    updateTabletVisualization();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function updateBioavailability() {
+            const bioavailabilityMap = {
+                "SUBLINGUAL TABLETS": 80,
+                "LOZENGE": 30,
+                "ORAL TABLET": 50,
+                "THIN FILM TABLET": 70
+            };
+
+            state.bioavailability = bioavailabilityMap[state.tabletType] || 50;
+            document.getElementById('bioavailabilityBar').style.width = `${state.bioavailability}%`;
+            document.getElementById('bioavailabilityText').textContent = `${state.bioavailability}%`;
+        }
+
+        function updateExcipientResults() {
+            const input = state.searchInput.toLowerCase();
+            let results = null;
+
+            if (input.includes('capsule')) results = excipientData.capsules;
+            else if (input.includes('lozenge')) results = excipientData.lozenges;
+            else if (input.includes('sublingual')) results = excipientData.sublingual;
+            else if (input.includes('oral')) results = excipientData.oral;
+            else if (input.includes('thin film') || input.includes('film')) results = excipientData.thinfilm;
+
+            const resultsContainer = document.getElementById('excipientResults');
+            
+            if (results) {
+                resultsContainer.style.display = 'block';
+                resultsContainer.innerHTML = `
+                    <div class="mt-4">
+                        <div class="text-lg font-bold mb-3">${results.title}</div>
+                        ${results.items.map(item => `
+                            <div class="mb-3 p-3 bg-gray-50 rounded border border-gray-300">
+                                <div class="font-bold mb-1">${item.name}</div>
+                                <div class="text-sm text-gray-600 mb-1">Benefit: ${item.benefit}</div>
+                                <div class="text-sm text-gray-700">Cost: ${item.cost}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } else {
+                resultsContainer.style.display = 'none';
+            }
+        }
+
+        function updateTabletVisualization() {
+            // Update gradient colors
+            document.getElementById('faceColor1').setAttribute('stop-color', state.selectedColor);
+            document.getElementById('faceColor2').setAttribute('stop-color', state.selectedColor);
+
+            const sizeMultipliers = { "8": 0.7, "10": 0.85, "12": 1.0, "14": 1.15 };
+            const sizeMultiplier = sizeMultipliers[state.tabletSize] || 1.0;
+
+            let transform = `scale(${sizeMultiplier}) translate(25,15)`;
+
+            if (state.tabletType === "LOZENGE") {
+                transform += " rotate(-12,125,135)";
+            } else if (state.tabletType === "SUBLINGUAL TABLETS") {
+                transform += " rotate(-10,125,135)";
+            } else if (state.tabletType === "THIN FILM TABLET") {
+                transform += " rotate(-10,125,135)";
+            } else {
+                const rotation = state.tabletShape === "ROUND" ? "rotate(-12,125,135)" : "rotate(-10,125,135)";
+                transform += ` ${rotation}`;
+            }
+
+            const tabletGroup = document.getElementById('tabletGroup');
+            tabletGroup.setAttribute('transform', transform);
+            tabletGroup.innerHTML = renderTabletShape() + renderEngraving();
+        }
+
+        function renderTabletShape() {
+            if (state.tabletType === "THIN FILM TABLET") {
+                return `
+                    <rect
+                        x="75"
+                        y="100"
+                        width="100"
+                        height="70"
+                        rx="3"
+                        ry="3"
+                        fill="url(#face)"
+                        stroke="#d1d5db"
+                        stroke-width="1"
+                        opacity="0.95"
+                    />
+                    <!-- Paper texture lines -->
+                    <line x1="80" y1="110" x2="170" y2="110" stroke="#f3f4f6" stroke-width="0.5" opacity="0.6" />
+                    <line x1="80" y1="120" x2="170" y2="120" stroke="#f3f4f6" stroke-width="0.5" opacity="0.6" />
+                    <line x1="80" y1="130" x2="170" y2="130" stroke="#f3f4f6" stroke-width="0.5" opacity="0.6" />
+                    <line x1="80" y1="140" x2="170" y2="140" stroke="#f3f4f6" stroke-width="0.5" opacity="0.6" />
+                    <line x1="80" y1="150" x2="170" y2="150" stroke="#f3f4f6" stroke-width="0.5" opacity="0.6" />
+                    <line x1="80" y1="160" x2="170" y2="160" stroke="#f3f4f6" stroke-width="0.5" opacity="0.6" />
+                    <!-- Paper edge shadow -->
+                    <rect x="76" y="101" width="98" height="68" rx="2" ry="2" fill="none" stroke="#e5e7eb" stroke-width="0.5" opacity="0.8" />
+                `;
+            }
+
+            if (state.tabletType === "SUBLINGUAL TABLETS") {
+                if (state.tabletShape === "SQUARE") {
+                    return `
+                        <rect
+                            x="75"
+                            y="115"
+                            width="100"
+                            height="100"
+                            rx="10"
+                            ry="10"
+                            fill="url(#face)"
+                            stroke="url(#rim)"
+                            stroke-width="10"
+                        />
+                        <rect x="85" y="125" width="80" height="80" rx="5" ry="5" fill="none" stroke-width="4" />
+                    `;
+                } else {
+                    return `
+                        <rect
+                            x="75"
+                            y="115"
+                            width="100"
+                            height="40"
+                            rx="20"
+                            ry="20"
+                            fill="url(#face)"
+                            stroke="url(#rim)"
+                            stroke-width="10"
+                        />
+                        <rect x="85" y="125" width="80" height="20" rx="10" ry="10" fill="none" stroke-width="4" />
+                    `;
+                }
+            }
+
+            if (state.tabletShape === "ROUND") {
+                return `
+                    <circle cx="125" cy="135" r="110" fill="url(#face)" stroke="url(#rim)" stroke-width="10" />
+                    <circle cx="125" cy="135" r="92" fill="none" stroke-width="8" />
+                `;
+            } else if (state.tabletShape === "OVAL") {
+                return `
+                    <rect
+                        x="35"
+                        y="75"
+                        width="180"
+                        height="120"
+                        rx="60"
+                        ry="60"
+                        fill="url(#face)"
+                        stroke="url(#rim)"
+                        stroke-width="10"
+                    />
+                    <rect x="51" y="91" width="148" height="88" rx="44" ry="44" fill="none" stroke-width="8" />
+                `;
+            } else if (state.tabletShape === "SQUARE") {
+                return `
+                    <rect
+                        x="35"
+                        y="55"
+                        width="180"
+                        height="160"
+                        rx="22"
+                        ry="22"
+                        fill="url(#face)"
+                        stroke="url(#rim)"
+                        stroke-width="10"
+                    />
+                    <rect x="51" y="73" width="148" height="124" rx="16" ry="16" fill="none" stroke-width="8" />
+                `;
+            }
+
+            return '';
+        }
+
+        function renderEngraving() {
+            let elements = '';
+
+            if (state.selectedIcon) {
+                elements += `
+                    <g>
+                        <text
+                            x="125"
+                            y="135"
+                            text-anchor="middle"
+                            font-size="28"
+                            font-weight="700"
+                            fill="none"
+                            stroke="#c4ccd6"
+                            stroke-width="2"
+                        >
+                            ${state.selectedIcon}
+                        </text>
+                        <text
+                            x="125"
+                            y="135"
+                            text-anchor="middle"
+                            font-size="28"
+                            font-weight="700"
+                            fill="none"
+                            stroke="#ffffff"
+                            stroke-opacity="0.85"
+                            stroke-width="1"
+                        >
+                            ${state.selectedIcon}
+                        </text>
+                    </g>
+                `;
+            }
+
+            if (state.tabletEngraving === "TEXT" && state.customText.trim()) {
+                elements += `
+                    <g>
+                        <text
+                            x="125"
+                            y="160"
+                            text-anchor="middle"
+                            font-size="12"
+                            font-weight="600"
+                            fill="#000000"
+                        >
+                            ${state.customText.toUpperCase()}
+                        </text>
+                    </g>
+                `;
+            }
+
+            if (state.tabletEngraving === "DEBOSSED") {
+                let startX, endX;
+                
+                if (state.tabletShape === "ROUND") {
+                    startX = 15;   // Full circle diameter
+                    endX = 235;
+                } else if (state.tabletShape === "OVAL") {
+                    startX = 35;   // Full oval width
+                    endX = 215;
+                } else if (state.tabletShape === "SQUARE") {
+                    startX = 35;   // Full square width
+                    endX = 215;
+                } else {
+                    startX = 35;   // Default full width
+                    endX = 215;
+                }
+                
+                const strokeWidth = 6;
+                const mainStrokeWidth = 4;
+                const highlightStrokeWidth = 2;
+                
+                elements += `
+                    <g>
+                        <!-- Bottom shadow for debossed gap effect -->
+                        <line
+                            x1="${startX}"
+                            y1="138"
+                            x2="${endX}"
+                            y2="138"
+                            stroke="#666666"
+                            stroke-width="${strokeWidth}"
+                            opacity="0.7"
+                        />
+                        <!-- Main recessed gap -->
+                        <line
+                            x1="${startX}"
+                            y1="135"
+                            x2="${endX}"
+                            y2="135"
+                            stroke="#333333"
+                            stroke-width="${mainStrokeWidth}"
+                            opacity="0.9"
+                        />
+                        <!-- Top highlight for depth -->
+                        <line
+                            x1="${startX}"
+                            y1="132"
+                            x2="${endX}"
+                            y2="132"
+                            stroke="#ffffff"
+                            stroke-width="${highlightStrokeWidth}"
+                            opacity="0.4"
+                        />
+                    </g>
+                `;
+            }
+
+            if (state.tabletEngraving === "LOGO") {
+                if (state.uploadedLogo) {
+                    elements += `
+                        <image
+                            href="${state.uploadedLogo}"
+                            x="105"
+                            y="125"
+                            width="40"
+                            height="40"
+                            style="filter: brightness(0) invert(1);"
+                        />
+                    `;
+                } else {
+                    elements += `
+                        <g>
+                            <text
+                                x="125"
+                                y="145"
+                                text-anchor="middle"
+                                font-size="32"
+                                font-weight="700"
+                                fill="none"
+                                stroke="#c4ccd6"
+                                stroke-width="3"
+                            >
+                                ✚
+                            </text>
+                            <text
+                                x="125"
+                                y="145"
+                                text-anchor="middle"
+                                font-size="32"
+                                font-weight="700"
+                                fill="none"
+                                stroke="#ffffff"
+                                stroke-opacity="0.85"
+                                stroke-width="1.6"
+                            >
+                                ✚
+                            </text>
+                        </g>
+                    `;
+                }
+            }
+
+            return elements;
+        }
+
+        function updateEngravingOptions() {
+            const debossedOption = document.getElementById('debossedOption');
+            const engravingSelect = document.getElementById('tabletEngraving');
+            
+            if (state.tabletType === "SUBLINGUAL TABLETS" || state.tabletType === "THIN FILM TABLET") {
+                debossedOption.style.display = 'none';
+                // If currently selected, reset to NONE
+                if (state.tabletEngraving === 'DEBOSSED') {
+                    state.tabletEngraving = 'NONE';
+                    engravingSelect.value = 'NONE';
+                    toggleEngravingInputs();
+                }
+            } else {
+                debossedOption.style.display = 'block';
+            }
+        }
+
+        // Initialize the app when the page loads
+        document.addEventListener('DOMContentLoaded', init);
+
+        function downloadTabletImage() {
+            const svg = document.getElementById('tabletSvg');
+            const svgData = new XMLSerializer().serializeToString(svg);
+            
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            
+            // Set canvas to match SVG viewBox dimensions
+            canvas.width = 320;
+            canvas.height = 320;
+            
+            img.onload = function() {
+                // Draw the complete SVG without cropping
+                ctx.drawImage(img, 0, 0, 320, 320);
+                
+                // Get image data to find tablet bounds
+                const imageData = ctx.getImageData(0, 0, 320, 320);
+                const data = imageData.data;
+                
+                // Find actual content bounds
+                let minX = 320, minY = 320, maxX = 0, maxY = 0;
+                
+                for (let y = 0; y < 320; y++) {
+                    for (let x = 0; x < 320; x++) {
+                        const index = (y * 320 + x) * 4;
+                        const alpha = data[index + 3];
+                        
+                        // If pixel is not transparent
+                        if (alpha > 10) {
+                            minX = Math.min(minX, x);
+                            minY = Math.min(minY, y);
+                            maxX = Math.max(maxX, x);
+                            maxY = Math.max(maxY, y);
+                        }
+                    }
+                }
+                
+                // Add small padding around the tablet
+                const padding = 10;
+                minX = Math.max(0, minX - padding);
+                minY = Math.max(0, minY - padding);
+                maxX = Math.min(320, maxX + padding);
+                maxY = Math.min(320, maxY + padding);
+                
+                const cropWidth = maxX - minX;
+                const cropHeight = maxY - minY;
+                
+                // Create final canvas with cropped dimensions
+                const finalCanvas = document.createElement('canvas');
+                const finalCtx = finalCanvas.getContext('2d');
+                finalCanvas.width = cropWidth;
+                finalCanvas.height = cropHeight;
+                
+                // Draw cropped tablet
+                finalCtx.drawImage(canvas, minX, minY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
+                
+                // Create download link
+                const link = document.createElement('a');
+                link.download = 'tablet-design.png';
+                link.href = finalCanvas.toDataURL('image/png');
+                link.click();
+            };
+            
+            // Convert SVG to data URL
+            const svgBlob = new Blob([svgData], {type: 'image/svg+xml;charset=utf-8'});
+            const url = URL.createObjectURL(svgBlob);
+            img.src = url;
+        }
+    </script>
+</body>
+</html>

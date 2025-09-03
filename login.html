@@ -1,0 +1,189 @@
+design 3
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RX Studio360 - Log in</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="/2.png" rel="fav-icon">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'navy-dark': '#0f1629',
+                        'navy': '#1e293b',
+                        'blue-custom': '#1e40af',
+                    }
+                }
+            }
+        }
+         
+    </script>
+</head>
+<body class="min-h-screen bg-[url('circuitpattern.png')] bg-cover bg-center relative overflow-hidden">
+
+    <!-- Updated background pattern to match original geometric network design -->
+    <div class="absolute inset-0 opacity-20">
+        <svg class="w-full h-full" viewBox="0 0 1400 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g stroke="currentColor" stroke-width="1" class="text-blue-800">
+                <!-- Network connection lines -->
+                <path d="M100 200 L300 150 L500 250 L700 200 L900 300 L1100 250 L1300 350" />
+                <path d="M150 400 L350 350 L550 450 L750 400 L950 500 L1150 450 L1350 550" />
+                <path d="M50 600 L250 550 L450 650 L650 600 L850 700 L1050 650 L1250 750" />
+                <path d="M200 100 L400 50 L600 150 L800 100 L1000 200 L1200 150" />
+                <!-- Vertical and diagonal connections -->
+                <path d="M300 150 L350 350" />
+                <path d="M700 200 L750 400" />
+                <path d="M500 250 L550 450" />
+                <path d="M900 300 L950 500" />
+                <path d="M1100 250 L1150 450" />
+                <path d="M150 400 L200 100" />
+                <path d="M650 600 L700 200" />
+            </g>
+           
+
+
+            <!-- Connection nodes -->
+            <g fill="currentColor" class="text-blue-900">
+                <circle cx="300" cy="150" r="3" />
+                <circle cx="500" cy="250" r="3" />
+                <circle cx="700" cy="200" r="3" />
+                <circle cx="900" cy="300" r="3" />
+                <circle cx="350" cy="350" r="3" />
+                <circle cx="550" cy="450" r="3" />
+                <circle cx="750" cy="400" r="3" />
+                <circle cx="950" cy="500" r="3" />
+                <circle cx="250" cy="550" r="3" />
+                <circle cx="450" cy="650" r="3" />
+                <circle cx="650" cy="600" r="3" />
+                <circle cx="850" cy="700" r="3" />
+            </g>
+        </svg>
+    </div>
+
+    <!-- Restructured main container to match original proportions and positioning -->
+    <div class="relative z-10 min-h-screen flex items-center justify-center p-6">
+        <div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-5xl h-[580px] flex">
+            <!-- Left Side - Sign Up Form (takes up about 65% width) -->
+            <div class="flex-[1.6] p-10 flex flex-col">
+                <!-- Fixed header with proper logo and navigation styling -->
+              
+                    <!-- Logo -->
+            <header class="w-full px-6 py-6">
+            <div class="max-w-7xl mx-auto flex items-center justify-between">
+                 
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full border-2 border-blue-500 flex items-center justify-center bg-gray-800">
+                        <span class="text-blue-500 font-bold text-lg">Rx</span>
+                    </div>
+                    <span class="text-black text-2xl font-semibold">Studio360</span>
+                </div>
+            </header>
+       
+            
+            <!-- Login Form -->
+            <!-- Centered form with proper vertical alignment -->
+            <div class="flex-1 flex flex-col justify-center items-start max-w-md mx-auto w-full">
+             <a href="/design4.html" class="none">   <h1 class="text-4xl font-bold text-slate-800 mb-12">Log in</h1></a>
+                
+                <form class="space-y-6 w-full">
+                    <!-- Username Field -->
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                        </div>
+                        <input 
+                            type="text" 
+                            placeholder="Username"
+                            class="w-full pl-12 pr-4 py-4 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-slate-700 placeholder-slate-400"
+                        >
+                    </div>
+                    
+                    <!-- Password Field -->
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                            </svg>
+                        </div>
+                        <input 
+                            type="password" 
+                            placeholder="Password"
+                            class="w-full pl-12 pr-12 py-4 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-slate-700 placeholder-slate-400"
+                        >
+                        <button type="button" class="absolute inset-y-0 right-0 pr-4 flex items-center">
+                            <svg class="h-5 w-5 text-slate-400 hover:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <!-- Remember Me and Forgot Password -->
+                    <!-- Better spacing and alignment for checkbox row -->
+                    <div class="flex items-center justify-between text-sm pt-2">
+                        <label class="flex items-center space-x-2 text-slate-600">
+                            <input type="checkbox" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                            <span>Remember Me</span>
+                        </label>
+                        <a href="#" class="text-slate-500 hover:text-blue-600 transition-colors">Forgot Password?</a>
+                    </div>
+                    
+                    <!-- Login Button -->
+                    <!-- Proper button styling and spacing -->
+                                  <button 
+                        type="submit"
+                        class="w-full bg-slate-800 text-white py-4 rounded-xl font-semibold hover:bg-slate-700 transition-colors mt-8"
+                    ><a href="/design4.html">
+  
+                        Log in
+                    </a> </button>
+               
+                </form>
+                
+                <!-- Sign up Link -->
+                <!-- Better positioning for sign up link -->
+                <div class="text-center mt-8 w-full">
+                    <span class="text-slate-600">or </span>
+                    <a href="/signup.html" class="text-slate-800 hover:text-blue-600 font-semibold underline">Sign up</a>
+                </div>
+            </div>
+        </div>
+        
+
+            
+            <!-- Right Side - Blue gradient with proper diagonal line pattern -->
+            <div class="flex-1 bg-gradient-to-br from-blue-800 to-blue-950 relative overflow-hidden">
+                <div class="absolute inset-0">
+                    <svg class="w-full h-full" viewBox="0 0 400 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <pattern id="diagonalLines" patternUnits="userSpaceOnUse" width="20" height="20" patternTransform="rotate(45)">
+                                <line x1="0" y1="0" x2="0" y2="20" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
+                            </pattern>
+                        </defs>
+                        <rect width="100%" height="100%" fill="url(#diagonalLines)"/>
+                        <!-- Additional diagonal lines for more density -->
+                        <g stroke="rgba(255,255,255,0.1)" stroke-width="0.5">
+                            <line x1="0" y1="0" x2="400" y2="400" />
+                            <line x1="0" y1="50" x2="400" y2="450" />
+                            <line x1="0" y1="100" x2="400" y2="500" />
+                            <line x1="0" y1="150" x2="400" y2="550" />
+                            <line x1="0" y1="200" x2="350" y2="550" />
+                            <line x1="50" y1="0" x2="400" y2="350" />
+                            <line x1="100" y1="0" x2="400" y2="300" />
+                            <line x1="150" y1="0" x2="400" y2="250" />
+                            <line x1="200" y1="0" x2="400" y2="200" />
+                        </g>
+                    </svg>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

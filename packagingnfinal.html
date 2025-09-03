@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Package Designing</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+
+        }
+
+
+        body {
+             background: url("circuitpattern.png") no-repeat center center fixed;
+             background-size: cover;
+            height: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: auto;
+            color: #fff;
+            padding: 20px;
+            
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            width: 90%;
+            max-width: 1500px;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            color: #fff;
+        }
+
+        .subtitle {
+            color: #000000;
+            font-size: 1.1rem;
+        }
+
+        .main-content {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .canvas-container {
+            position: relative;
+            width: 60%;
+            max-height: 850px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        canvas {
+            background: #000;
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 50%;
+        }
+
+        .control-panel {
+            background: rgb(0, 0, 0);
+            padding: 20px;
+            border-radius: 12px;
+            backdrop-filter: blur(5px);
+            /* height:95vh; */
+        }
+
+        .control-panell {
+            background: rgb(0, 0, 0);
+            padding: 20px;
+            border-radius: 12px;
+            backdrop-filter: blur(5px);
+            height: fit-content;
+        }
+
+        h2 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #4cc9f0;
+        }
+
+        .side-controls {
+            display: flex;
+            flex-direction: column;
+            /* stack vertically */
+            /* gap: 20px;  */
+            /* space between Face Selection and AI Detection */
+            /* margin-top: 15px; */
+        }
+
+        .control-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 60%;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            height: 6px;
+            /* -webkit-appearance: none; */
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #4cc9f0;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            background: #3aa8d0;
+        }
+
+        .value-display {
+            min-width: 50px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: 500;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: #4cc9f0;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background: #3aa8d0;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .instructions {
+            text-align: center;
+            margin-top: 15px;
+            color: #a0a0c0;
+            font-size: 0.9rem;
+        }
+
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            color: #777;
+            font-size: 0.9rem;
+        }
+
+        /* Texture controls */
+        .texture-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .face-selection {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .face-btn {
+            padding: 8px;
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .face-btn.active {
+            background: #4cc9f0;
+        }
+
+        .texture-upload {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .texture-edit {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .file-upload-label {
+            padding: 10px;
+            background: rgba(76, 201, 240, 0.3);
+            border-radius: 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .file-upload-label:hover {
+            background: rgba(76, 201, 240, 0.5);
+        }
+
+        .edit-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        /* QR Code and Braille Controls */
+        .qr-braille-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        textarea,
+        input[type="text"] {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            font-family: inherit;
+        }
+
+        .braille-output {
+            min-height: 70px;
+            padding: 10px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            font-family: monospace;
+            white-space: pre-wrap;
+            text-align: center;
+            font-size: 24px;
+            line-height: 1.4;
+        }
+
+        /* New styles for medicine type and AI analysis */
+        .medicine-type-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .medicine-select {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            font-family: inherit;
+        }
+
+
+
+        .ai-analysis {
+            margin-top: 0px;
+            height: fit-content;
+        }
+
+        .checklist {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .check-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+        }
+
+        .check-icon {
+            font-size: 1.2rem;
+        }
+
+        .checked {
+            color: #2ecc71;
+        }
+
+        .unchecked {
+            color: #e74c3c;
+        }
+
+        .ai-suggestions {
+            margin-top: 20px;
+            width: 400px;
+        }
+
+        .suggestion-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid #4cc9f0;
+        }
+
+        .suggestion-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #4cc9f0;
+        }
+
+        .suggestion-desc {
+            font-size: 0.9rem;
+            color: #ddd;
+        }
+
+        .suggestion-price {
+            margin-top: 5px;
+            font-weight: bold;
+            color: #2ecc71;
+        }
+
+        .ai-thinking {
+            text-align: center;
+            padding: 20px;
+            color: #a0a0c0;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #4cc9f0;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width:766px) {
+
+            /* Texture controls */
+            .texture-controls {
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+                margin-top: 15px;
+            }
+
+
+            .main-content {
+                display: flex;
+                gap: 20px;
+                width: 100%;
+            }
+
+        }
+
+        @media (max-width: 1200px) {
+            .main-content {
+                flex-direction: column;
+            }
+
+            .canvas-container,
+            .controls {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .canvas-container {
+                height: 350px;
+            }
+
+            .face-selection {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>3D Packaging Designer</h1>
+        </header>
+
+        <div class="main-content">
+            <div class="canvas-container">
+                <canvas id="cuboidCanvas"></canvas>
+            </div>
+            
+            
+
+            <div class="side-controls">
+                <div class="control-panell" style="text-align: left;">
+                    <h2>Face Selection</h2>
+                    <div class="face-selection">
+                        <button class="face-btn" data-face="0">Front</button>
+                        <button class="face-btn" data-face="1">Back</button>
+                        <button class="face-btn" data-face="2">Left</button>
+                        <button class="face-btn" data-face="3">Right</button>
+                        <button class="face-btn" data-face="4">Top</button>
+                        <button class="face-btn active" data-face="5">Bottom</button>
+                    </div>
+                    
+
+                    <div class="texture-edit">
+                        <div class="edit-controls">
+                            <label for="positionX">Position X:</label>
+                            <input type="range" id="positionX" min="-100" max="100" value="0">
+
+                            <label for="positionY">Position Y:</label>
+                            <input type="range" id="positionY" min="-100" max="100" value="0">
+
+                            <label for="scale">Scale:</label>
+                            <input type="range" id="scale" min="10" max="200" value="100">
+
+                            <label for="rotation">Rotation:</label>
+                            <input type="range" id="rotation" min="0" max="360" value="0">
+                        </div>
+
+                        <div class="buttons">
+                            <button id="resetTexture">Reset Texture</button>
+                            <button id="clearTexture">Clear Texture</button>
+                        </div>
+                    </div>
+                </div>
+<div class="control-panel ai-suggestions" style="text-align: left;">
+                    <h2>AI Packaging Suggestions</h2>
+                    <div class="input-group">
+                        <label for="suggestionType">Select Medicine Type:</label>
+                        <select id="suggestionType" class="medicine-select">
+                            <option value="">Select Medicine Type</option>
+                            <option value="tablet">Tablet</option>
+                            <option value="ointment">Ointment</option>
+                            <option value="drops">Drops</option>
+                        </select>
+                    </div>
+
+                    <div id="suggestions">
+                        <div class="ai-thinking">
+                            <div class="spinner"></div>
+                            <p>Select a medicine type to view packaging suggestions</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+               <div class="control-panel ai-analysis">
+    <h2>AI Content Detection</h2>
+    <div class="checklist">
+        <div class="check-item"><div class="check-icon"><i class="fas fa-check-circle unchecked"></i></div><div class="check-text">Registration Number</div></div>
+        <div class="check-item"><div class="check-icon"><i class="fas fa-check-circle unchecked"></i></div><div class="check-text">Barcode</div></div>
+        <div class="check-item"><div class="check-icon"><i class="fas fa-check-circle unchecked"></i></div><div class="check-text">Name (Brand & Generic)</div></div>
+        <div class="check-item"><div class="check-icon"><i class="fas fa-check-circle unchecked"></i></div><div class="check-text">Strength</div></div>
+        <div class="check-item"><div class="check-icon"><i class="fas fa-check-circle unchecked"></i></div><div class="check-text">Warning</div></div>
+        <div class="check-item"><div class="check-icon"><i class="fas fa-check-circle unchecked"></i></div><div class="check-text">Manufacturing Date</div></div>
+        <div class="check-item"><div class="check-icon"><i class="fas fa-check-circle unchecked"></i></div><div class="check-text">Expiry Date</div></div>
+        <div class="check-item"><div class="check-icon"><i class="fas fa-check-circle unchecked"></i></div><div class="check-text">Storage Instructions</div></div>
+        <div class="check-item"><div class="check-icon"><i class="fas fa-check-circle unchecked"></i></div><div class="check-text">Prescription Status (Rx/OTC)</div></div>
+        <div class="check-item"><div class="check-icon"><i class="fas fa-check-circle unchecked"></i></div><div class="check-text">QR Code</div></div>
+        <div class="check-item"><div class="check-icon"><i class="fas fa-check-circle unchecked"></i></div><div class="check-text">Braille</div></div>
+    </div>
+</div>
+
+                
+
+            <div class="controls">
+                <div class="control-panel">
+                    <h2>Medicine Type</h2>
+                    <div class="medicine-type-section">
+                        <select id="medicineType" class="medicine-select">
+                            <option value="tablet">Tablet</option>
+                            <option value="ointment">Ointment</option>
+                            <option value="drops">Drops</option>
+                        </select>
+                    </div>
+
+                    <!-- Add to your controls, e.g. after Face Selection -->
+                    <div class="control-panel">
+                        <h2>Upload Image to Face</h2>
+                        <div class="input-group">
+                            <label for="faceImageUpload">Upload Image:</label>
+                            <input type="file" id="faceImageUpload" accept="image/*">
+                            <label for="faceImageUpload" class="file-upload-label">Select Image</label>
+                        </div>
+                        <div class="buttons">
+                            <button id="applyFaceImage">Apply Image to Selected Face</button>
+                        </div>
+                    </div>
+                    <h2>QR Code Upload</h2>
+                    <div class="input-group">
+                        <label for="qrUpload">Upload QR Code:</label>
+                        <input type="file" id="qrUpload" accept="image/*">
+                        <label for="qrUpload" class="file-upload-label">Select QR Code Image</label>
+                    </div>
+                    <div class="buttons">
+                        <button id="applyQr">Apply QR to Selected Face</button>
+                    </div>
+                </div>
+
+                <div class="control-panel">
+                    <h2>Text to Braille Converter</h2>
+                    <div class="input-group">
+                        <label for="brailleInput">Enter Text:</label>
+                        <textarea id="brailleInput" rows="3" placeholder="Type text to convert to braille"></textarea>
+                    </div>
+                    <div class="buttons">
+                        <button id="convertBraille">Convert to Braille</button>
+                        <button id="applyBraille">Apply Braille to Face</button>
+                    </div>
+                    <div class="input-group">
+                        <label>Braille Output:</label>
+                        <div id="brailleOutput" class="braille-output"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <p class="instructions">Drag on the cuboid to rotate it. Use mouse wheel to zoom in/out. Select a face and add
+            QR codes or braille text.</p>
+
+        <div class="footer">
+            HTML, CSS & JavaScript 3D Implementation with QR Code and Braille Features
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script>
+        // ...existing code...
+
+        // Get the canvas and context
+        const canvas = document.getElementById('cuboidCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Set canvas size
+        function resizeCanvas() {
+            canvas.width = canvas.parentElement.offsetWidth;
+            canvas.height = canvas.parentElement.offsetHeight;
+        }
+
+        // Initial cuboid dimensions
+        let width = 60;
+        let height = 80;
+        let depth = 160;
+
+        // Initial transformation values
+        let rotationX = -0.5;
+        let rotationY = 0.5;
+        let rotationZ = 0;
+        let zoom = 0.8;
+        let autoRotate = true;
+
+        // Texture data for each face
+
+        const defaultImage = "./assets/panadol.jpg"; // default image path
+        
+        const textures = [
+            { image: null, x: 0, y: 0, scale: 1, rotation: 0, type: null }, // Front
+            { image: null, x: 0, y: 0, scale: 1, rotation: 0, type: null }, // Back
+            { image: null, x: 0, y: 0, scale: 1, rotation: 0, type: null }, // Left
+            { image: null, x: 0, y: 0, scale: 1, rotation: 0, type: null }, // Right
+            { image: null, x: 0, y: 0, scale: 1, rotation: 0, type: null }, // Top
+            { image: null, x: 0, y: 0, scale: 1, rotation: 0, type: null }  // Bottom
+        ];
+
+        let selectedFace = 5; // Default to bottom face
+        let brailleOutput = "";
+        let qrImage = null;
+
+        // Mouse interaction variables
+        let isMouseDown = false;
+        let lastMouseX, lastMouseY;
+
+        // Set up control elements
+        const faceButtons = document.querySelectorAll('.face-btn');
+        const positionXSlider = document.getElementById('positionX');
+        const positionYSlider = document.getElementById('positionY');
+        const scaleSlider = document.getElementById('scale');
+        const rotationSlider = document.getElementById('rotation');
+        const resetTextureBtn = document.getElementById('resetTexture');
+        const clearTextureBtn = document.getElementById('clearTexture');
+
+        // QR Code elements
+        const qrUpload = document.getElementById('qrUpload');
+        const applyQrBtn = document.getElementById('applyQr');
+
+        // Braille elements
+        const brailleInput = document.getElementById('brailleInput');
+        const brailleOutputElem = document.getElementById('brailleOutput');
+        const convertBrailleBtn = document.getElementById('convertBraille');
+        const applyBrailleBtn = document.getElementById('applyBraille');
+
+        // Medicine type elements
+        const medicineTypeSelect = document.getElementById('medicineType');
+        const suggestionTypeSelect = document.getElementById('suggestionType');
+        const suggestionsDiv = document.getElementById('suggestions');
+        const checkIcons = document.querySelectorAll('.check-icon i');
+
+        // Braille mapping
+        const brailleMap = {
+            'a': '⠁', 'b': '⠃', 'c': '⠉', 'd': '⠙', 'e': '⠑', 'f': '⠋', 'g': '⠛', 'h': '⠓',
+            'i': '⠊', 'j': '⠚', 'k': '⠅', 'l': '⠇', 'm': '⠍', 'n': '⠝', 'o': '⠕', 'p': '⠏',
+            'q': '⠟', 'r': '⠗', 's': '⠎', 't': '⠞', 'u': '⠥', 'v': '⠧', 'w': '⠺', 'x': '⠭',
+            'y': '⠽', 'z': '⠵', '0': '⠴', '1': '⠂', '2': '⠆', '3': '⠒', '4': '⠲', '5': '⠢',
+            '6': '⠖', '7': '⠶', '8': '⠦', '9': '⠔', ' ': ' ', '.': '⠄', ',': '⠂', ';': '⠆',
+            ':': '⠒', '!': '⠖', '?': '⠦', '-': '⠤', '\'': '⠄', '"': '⠐', '(': '⠣', ')': '⠜',
+            '/': '⠌', '\\': '⠡', '*': '⠔', '+': '⠬', '=': '⠿', '$': '⠫', '&': '⠯'
+        };
+
+        // Convert text to braille
+        function textToBraille(text) {
+            return text.toLowerCase().split('').map(char => {
+                return brailleMap[char] || char;
+            }).join('');
+        }
+
+        // Face selection
+        faceButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                faceButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                const face = parseInt(this.dataset.face);
+
+        // Remap faces:
+        // 0: Front → 3 (Right)
+        // 1: Back  → 2 (Left)
+        // 2: Left  → 1 (Back)
+        // 3: Right → 0 (Front)
+        // 4: Top   → 4 (Top, unchanged)
+        // 5: Bottom→ 5 (Bottom, unchanged)
+        const remap = [3, 2, 1, 0, 4, 5];
+        selectedFace = remap[face];
+
+        // Update texture controls with selected face's values
+        const texture = textures[selectedFace];
+        positionXSlider.value = texture.x * 100;
+        positionYSlider.value = texture.y * 100;
+        scaleSlider.value = texture.scale * 100;
+        rotationSlider.value = texture.rotation;
+    });
+});
+                
+        // QR Code upload
+        qrUpload.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                qrImage = new Image();
+                qrImage.onload = function () {
+                    // Store the QR code image for later application
+                };
+                qrImage.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Apply QR code to selected face
+        applyQrBtn.addEventListener('click', function () {
+            if (!qrImage) {
+                alert("Please upload a QR code image first.");
+                return;
+            }
+
+            textures[selectedFace].image = qrImage;
+            textures[selectedFace].type = "qr";
+
+            // Reset texture adjustments
+            textures[selectedFace].x = 0;
+            textures[selectedFace].y = 0;
+            textures[selectedFace].scale = 1;
+            textures[selectedFace].rotation = 0;
+
+            // Update sliders
+            positionXSlider.value = 0;
+            positionYSlider.value = 0;
+            scaleSlider.value = 100;
+            rotationSlider.value = 0;
+
+            // Simulate AI detection of QR code
+            simulateAnalysis();
+        });
+
+        // Convert text to braille
+        convertBrailleBtn.addEventListener('click', function () {
+            const text = brailleInput.value;
+            if (!text) {
+                alert("Please enter some text to convert.");
+                return;
+            }
+
+            brailleOutput = textToBraille(text);
+            brailleOutputElem.textContent = brailleOutput;
+        });
+
+        // Apply braille to selected face
+        applyBrailleBtn.addEventListener('click', function () {
+            if (!brailleOutput) {
+                alert("Please convert text to braille first.");
+                return;
+            }
+
+            // Create a canvas for the braille text
+            const brailleCanvas = document.createElement('canvas');
+            brailleCanvas.width = 400;
+            brailleCanvas.height = 200;
+            const brailleCtx = brailleCanvas.getContext('2d');
+
+            // Draw braille text
+            brailleCtx.fillStyle = 'black';
+            brailleCtx.font = '40px Arial';
+            brailleCtx.textAlign = 'center';
+            brailleCtx.textBaseline = 'middle';
+            brailleCtx.fillText(brailleOutput, brailleCanvas.width / 2, brailleCanvas.height / 2);
+
+            // Convert canvas to image
+            const brailleImage = new Image();
+            brailleImage.src = brailleCanvas.toDataURL();
+
+            // Apply to selected face
+            brailleImage.onload = function () {
+                textures[selectedFace].image = brailleImage;
+                textures[selectedFace].type = "braille";
+
+                // Reset texture adjustments
+                textures[selectedFace].x = 0;
+                textures[selectedFace].y = 0;
+                textures[selectedFace].scale = 1;
+                textures[selectedFace].rotation = 0;
+
+                // Update sliders
+                positionXSlider.value = 0;
+                positionYSlider.value = 0;
+                scaleSlider.value = 100;
+                rotationSlider.value = 0;
+
+                // Simulate AI detection of braille
+                simulateAnalysis();
+            };
+        });
+
+        // Texture position X
+        positionXSlider.addEventListener('input', function () {
+            textures[selectedFace].x = this.value / 100;
+        });
+
+        // Texture position Y
+        positionYSlider.addEventListener('input', function () {
+            textures[selectedFace].y = this.value / 100;
+        });
+
+        // Texture scale
+        scaleSlider.addEventListener('input', function () {
+            textures[selectedFace].scale = this.value / 100;
+        });
+
+        // Texture rotation
+        rotationSlider.addEventListener('input', function () {
+            textures[selectedFace].rotation = parseInt(this.value);
+        });
+
+        // Reset texture
+        resetTextureBtn.addEventListener('click', function () {
+            textures[selectedFace].x = 0;
+            textures[selectedFace].y = 0;
+            textures[selectedFace].scale = 1;
+            textures[selectedFace].rotation = 0;
+
+            positionXSlider.value = 0;
+            positionYSlider.value = 0;
+            scaleSlider.value = 100;
+            rotationSlider.value = 0;
+        });
+
+        // Clear texture
+        clearTextureBtn.addEventListener('click', function () {
+            textures[selectedFace].image = null;
+            textures[selectedFace].type = null;
+        });
+
+        // Medicine type change event
+        medicineTypeSelect.addEventListener('change', function () {
+            const type = this.value;
+
+            switch (type) {
+                case 'ointment':
+                    width = 24;
+                    height = 33;
+                    depth = 160;
+                    break;
+                case 'tablet':
+                    width = 20;
+                    height = 93;
+                    depth = 160;
+                    break;
+                case 'drops':
+                    width = 15;
+                    height = 20;
+                    depth = 40;
+                    break;
+                default:
+                    width = 10;
+                    height = 10;
+                    depth = 10;
+            }
+
+            suggestionTypeSelect.value = medicineTypeSelect.value;
+            updateSuggestions();
+        });
+
+        // ...existing code...
+
+        let uploadedFaceImage = null;
+
+        const faceImageUpload = document.getElementById('faceImageUpload');
+        const applyFaceImageBtn = document.getElementById('applyFaceImage');
+
+        faceImageUpload.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                uploadedFaceImage = new Image();
+                uploadedFaceImage.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+
+        applyFaceImageBtn.addEventListener('click', function () {
+            if (!uploadedFaceImage) {
+                alert("Please upload an image first.");
+                return;
+            }
+
+            // Wait for image to load before applying
+            uploadedFaceImage.onload = function () {
+                textures[selectedFace].image = uploadedFaceImage;
+                textures[selectedFace].type = "custom";
+
+                // Reset texture adjustments
+                textures[selectedFace].x = 0;
+                textures[selectedFace].y = 0;
+                textures[selectedFace].scale = 1;
+                textures[selectedFace].rotation = 0;
+
+                // Update sliders
+                positionXSlider.value = 0;
+                positionYSlider.value = 0;
+                scaleSlider.value = 100;
+                rotationSlider.value = 0;
+            };
+
+            // If already loaded, apply immediately
+            if (uploadedFaceImage.complete) {
+                textures[selectedFace].image = uploadedFaceImage;
+                textures[selectedFace].type = "custom";
+                textures[selectedFace].x = 0;
+                textures[selectedFace].y = 0;
+                textures[selectedFace].scale = 1;
+                textures[selectedFace].rotation = 0;
+                positionXSlider.value = 0;
+                positionYSlider.value = 0;
+                scaleSlider.value = 100;
+                rotationSlider.value = 0;
+            }
+        });
+
+        // ...existing code...
+
+        // Suggestion type change event
+        suggestionTypeSelect.addEventListener('change', updateSuggestions);
+
+        function updateSuggestions() {
+            const type = suggestionTypeSelect.value;
+
+            if (!type) {
+                suggestionsDiv.innerHTML = `
+            <div class="ai-thinking">
+                <div class="spinner"></div>
+                <p>Select a medicine type to view packaging suggestions</p>
+            </div>
+        `;
+                return;
+            }
+
+            // Show thinking state
+            suggestionsDiv.innerHTML = `
+        <div class="ai-thinking">
+            <div class="spinner"></div>
+            <p>AI is generating packaging suggestions...</p>
+        </div>
+    `;
+
+            // Simulate AI processing time
+            setTimeout(() => {
+                if (type === 'tablet') {
+                    suggestionsDiv.innerHTML = `
+                <div class="suggestion-item">
+                    <div class="suggestion-title">PVC/PVDC blisters</div>
+                    <div class="suggestion-desc">Standard packaging with good barrier properties</div>
+                    <div class="suggestion-price">0.6–1.2 PKR/strip (cheapest)</div>
+                </div>
+                <div class="suggestion-item">
+                    <div class="suggestion-title">Alu-Alu blisters</div>
+                    <div class="suggestion-desc">Superior moisture/light barrier, eco-recyclable</div>
+                    <div class="suggestion-price">2–3 PKR/strip</div>
+                </div>
+                <div class="suggestion-item">
+                    <div class="suggestion-title">Paperboard boxes with strips</div>
+                    <div class="suggestion-desc">Recyclable, eco-friendly option</div>
+                    <div class="suggestion-price">2–4 PKR/box</div>
+                </div>
+            `;
+                } else if (type === 'ointment') {
+                    suggestionsDiv.innerHTML = `
+                <div class="suggestion-item">
+                    <div class="suggestion-title">Aluminum collapsible tubes</div>
+                    <div class="suggestion-desc">Recyclable and light-proof packaging</div>
+                    <div class="suggestion-price">3–6 PKR/tube</div>
+                </div>
+                <div class="suggestion-item">
+                    <div class="suggestion-title">HDPE/Laminate tubes</div>
+                    <div class="suggestion-desc">Budget option, but less eco-friendly</div>
+                    <div class="suggestion-price">2–4 PKR/tube</div>
+                </div>
+                <div class="suggestion-item">
+                    <div class="suggestion-title">Biodegradable sugarcane/PLA tubes</div>
+                    <div class="suggestion-desc">Eco-premium sustainable option</div>
+                    <div class="suggestion-price">5–8 PKR/tube</div>
+                </div>
+            `;
+                } else if (type === 'drops') {
+                    suggestionsDiv.innerHTML = `
+                <div class="suggestion-item">
+                    <div class="suggestion-title">HDPE/LDPE bottles with droppers</div>
+                    <div class="suggestion-desc">Budget-friendly option</div>
+                    <div class="suggestion-price">3–6 PKR/piece</div>
+                </div>
+                <div class="suggestion-item">
+                    <div class="suggestion-title">Glass dropper bottles</div>
+                    <div class="suggestion-desc">Eco-recyclable with premium look</div>
+                    <div class="suggestion-price">5–8 PKR/piece</div>
+                </div>
+                <div class="suggestion-item">
+                    <div class="suggestion-title">PET bottles</div>
+                    <div class="suggestion-desc">Light & cheap with partial recyclability</div>
+                    <div class="suggestion-price">2–4 PKR/piece</div>
+                </div>
+            `;
+                }
+            }, 1500);
+        }
+
+        function simulateAnalysis() {
+            // Show thinking state
+            checkIcons.forEach(icon => {
+                icon.classList.remove('checked');
+                icon.classList.add('unchecked');
+                icon.className = 'fas fa-question-circle unchecked';
+            });
+
+            // Simulate AI processing time
+            setTimeout(() => {
+                // Randomly determine which features are detected
+                checkIcons.forEach(icon => {
+                    const rand = Math.random();
+                    if (rand > 0.3) {
+                        icon.classList.remove('unchecked');
+                        icon.classList.add('checked');
+                        icon.className = 'fas fa-check-circle checked';
+                    } else {
+                        icon.classList.remove('checked');
+                        icon.classList.add('unchecked');
+                        icon.className = 'fas fa-times-circle unchecked';
+                    }
+                });
+            }, 2000);
+        }
+
+        // Mouse event handlers for rotation
+        canvas.addEventListener('mousedown', function (e) {
+            isMouseDown = true;
+            lastMouseX = e.clientX;
+            lastMouseY = e.clientY;
+            canvas.style.cursor = 'grabbing';
+        });
+
+        canvas.addEventListener('mouseup', function () {
+            isMouseDown = false;
+            canvas.style.cursor = 'grab';
+        });
+
+        canvas.addEventListener('mousemove', function (e) {
+            if (!isMouseDown) return;
+
+            const deltaX = e.clientX - lastMouseX;
+            const deltaY = e.clientY - lastMouseY;
+
+            rotationY += deltaX * 0.01;
+            rotationX += deltaY * 0.01;
+
+            lastMouseX = e.clientX;
+            lastMouseY = e.clientY;
+        });
+
+        canvas.addEventListener('mouseleave', function () {
+            isMouseDown = false;
+            canvas.style.cursor = 'grab';
+        });
+
+        canvas.addEventListener('mouseenter', function () {
+            canvas.style.cursor = 'grab';
+        });
+
+        // Mouse wheel for zoom
+        canvas.addEventListener('wheel', function (e) {
+            e.preventDefault();
+            zoom += e.deltaY * -0.015;
+            zoom = Math.max(0.5, Math.min(5, zoom));
+        });
+
+        // Define the vertices of the cuboid
+        function getVertices() {
+            return [
+                { x: -width / 2, y: -height / 2, z: -depth / 2 }, // 0: left-bottom-back
+                { x: width / 2, y: -height / 2, z: -depth / 2 }, // 1: right-bottom-back
+                { x: width / 2, y: height / 2, z: -depth / 2 }, // 2: right-top-back
+                { x: -width / 2, y: height / 2, z: -depth / 2 }, // 3: left-top-back
+                { x: -width / 2, y: -height / 2, z: depth / 2 }, // 4: left-bottom-front
+                { x: width / 2, y: -height / 2, z: depth / 2 }, // 5: right-bottom-front
+                { x: width / 2, y: height / 2, z: depth / 2 }, // 6: right-top-front
+                { x: -width / 2, y: height / 2, z: depth / 2 }  // 7: left-top-front
+            ];
+        }
+
+        // Define the edges of the cuboid (vertex indices)
+        const edges = [
+            [0, 1], [1, 2], [2, 3], [3, 0], // back face
+            [4, 5], [5, 6], [6, 7], [7, 4], // front face
+            [0, 4], [1, 5], [2, 6], [3, 7]  // connecting edges
+        ];
+
+        // Define the faces of the cuboid
+        const faces = [
+            { vertices: [4, 5, 6, 7], color: 'rgb(255, 255, 255)', normal: [0, 0, 1] },  // front - pure white
+            { vertices: [0, 1, 2, 3], color: 'rgb(250, 250, 250)', normal: [0, 0, -1] }, // back - slightly off-white
+            { vertices: [0, 4, 7, 3], color: 'rgb(245, 245, 245)', normal: [-1, 0, 0] }, // left
+            { vertices: [1, 5, 6, 2], color: 'rgb(240, 240, 240)', normal: [1, 0, 0] },  // right
+            { vertices: [3, 2, 6, 7], color: 'rgb(235, 235, 235)', normal: [0, 1, 0] },  // top
+            { vertices: [0, 1, 5, 4], color: 'rgb(230, 230, 230)', normal: [0, -1, 0] }  // bottom
+        ];
+
+        // Project 3D point to 2D screen space
+        function projectPoint(point) {
+            // Apply rotation
+            const cosX = Math.cos(rotationX);
+            const sinX = Math.sin(rotationX);
+            const cosY = Math.cos(rotationY);
+            const sinY = Math.sin(rotationY);
+            const cosZ = Math.cos(rotationZ);
+            const sinZ = Math.sin(rotationZ);
+
+            // Rotate around X axis
+            let y1 = point.y * cosX - point.z * sinX;
+            let z1 = point.z * cosX + point.y * sinX;
+
+            // Rotate around Y axis
+            let x2 = point.x * cosY - z1 * sinY;
+            let z2 = z1 * cosY + point.x * sinY;
+
+            // Rotate around Z axis
+            let x3 = x2 * cosZ - y1 * sinZ;
+            let y3 = y1 * cosZ + x2 * sinZ;
+
+            // Apply perspective and zoom
+            const scale = 400 * zoom / (depth + z2);
+            const x = x3 * scale + canvas.width / 2;
+            const y = y3 * scale + canvas.height / 2;
+
+            return { x, y, z: z2 };
+        }
+
+        // Draw texture on a face
+        function drawTexture(faceIndex, vertices) {
+            const texture = textures[faceIndex];
+            if (!texture.image) return;
+
+            ctx.save();
+
+            // Create a path for the face
+            ctx.beginPath();
+            ctx.moveTo(vertices[0].x, vertices[0].y);
+            for (let i = 1; i < vertices.length; i++) {
+                ctx.lineTo(vertices[i].x, vertices[i].y);
+            }
+            ctx.closePath();
+            ctx.clip();
+
+            // Calculate center of the face
+            const centerX = (vertices[0].x + vertices[1].x + vertices[2].x + vertices[3].x) / 4;
+            const centerY = (vertices[0].y + vertices[1].y + vertices[2].y + vertices[3].y) / 4;
+
+            // Calculate face width and height
+            const width = Math.sqrt(
+                Math.pow(vertices[1].x - vertices[0].x, 2) +
+                Math.pow(vertices[1].y - vertices[0].y, 2)
+            );
+
+            const height = Math.sqrt(
+                Math.pow(vertices[3].x - vertices[0].x, 2) +
+                Math.pow(vertices[3].y - vertices[0].y, 2)
+            );
+
+            // Apply transformations
+            ctx.translate(centerX, centerY);
+            ctx.rotate(texture.rotation * Math.PI / 180);
+
+            // Draw the image with adjustments
+            const imgWidth = texture.image.width * texture.scale;
+            const imgHeight = texture.image.height * texture.scale;
+
+            ctx.drawImage(
+                texture.image,
+                -imgWidth / 2 + width * texture.x,
+                -imgHeight / 2 + height * texture.y,
+                imgWidth,
+                imgHeight
+            );
+
+            ctx.restore();
+        }
+
+        // Draw the cuboid
+        function drawCuboid() {
+            // Clear the canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Get current vertices based on dimensions
+            const vertices = getVertices();
+
+            // Project all vertices
+            const projectedVertices = vertices.map(projectPoint);
+
+            // Draw faces with depth sorting
+            const sortedFaces = faces.map((face, index) => {
+                // Calculate average z for depth sorting
+                const avgZ = face.vertices.reduce((sum, idx) => sum + projectedVertices[idx].z, 0) / face.vertices.length;
+                return { face, avgZ, index };
+            }).sort((a, b) => b.avgZ - a.avgZ); // Sort back to front
+
+            // Draw each face
+            sortedFaces.forEach(({ face, index }) => {
+                const faceVertices = face.vertices.map(i => projectedVertices[i]);
+
+                ctx.beginPath();
+                ctx.moveTo(faceVertices[0].x, faceVertices[0].y);
+
+                for (let i = 1; i < faceVertices.length; i++) {
+                    ctx.lineTo(faceVertices[i].x, faceVertices[i].y);
+                }
+
+                ctx.closePath();
+
+                // Fill the face with solid white (no transparency)
+                ctx.fillStyle = face.color;
+                ctx.fill();
+
+                // Draw texture if exists
+                drawTexture(index, faceVertices);
+
+                // Draw the edge
+                ctx.strokeStyle = 'rgba(200, 200, 200, 0.6)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            });
+
+            // Draw edges with a different style for better visibility
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = 'rgba(200, 200, 200, 0.7)';
+
+            for (const edge of edges) {
+                const start = projectedVertices[edge[0]];
+                const end = projectedVertices[edge[1]];
+
+                ctx.beginPath();
+                ctx.moveTo(start.x, start.y);
+                ctx.lineTo(end.x, end.y);
+                ctx.stroke();
+            }
+
+            // Draw vertices as small dots
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            for (const vertex of projectedVertices) {
+                ctx.beginPath();
+                ctx.arc(vertex.x, vertex.y, 3, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // Animation loop
+        function animate() {
+            resizeCanvas();
+
+            if (autoRotate) {
+                rotationY += 0.000;
+            }
+
+            drawCuboid();
+            requestAnimationFrame(animate);
+        }
+
+        // Start the animation
+        window.addEventListener('load', function () {
+            resizeCanvas();
+            animate();
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', resizeCanvas);
+
+        // ...existing code...
+    </script>
+</body>
+
+</html>
+<!DOCTYPE html>

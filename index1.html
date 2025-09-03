@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RX Studio360 - Molecule to Market</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="/2.png" rel="fav-icon">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a2332;
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        /* Static background with circuit pattern - no animations */
+        .circuit-bg {
+            background: linear-gradient(135deg, #1a2332 0%, #2d3748 100%);
+            position: relative;
+        }
+        
+        .circuit-bg {
+    background: linear-gradient(135deg, #020b1b 0%, #2d3748 100%);
+    background-image: url("/circuitpattern.png");
+    background-size: cover;      /* or repeat, contain */
+    background-repeat: repeat;   /* if you want a tiled effect */
+    background-blend-mode: overlay; /* lets PNG blend nicely */
+    backface-visibility: inherit;
+    background-blend-mode: darken;
+}
+
+
+
+        
+        /* Static button styles - no hover effects or animations */
+        .btn-primary {
+            background: #60a5fa;
+            border: none;
+            cursor: pointer;
+            color: white;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #60a5fa;
+            color: #60a5fa;
+            cursor: pointer;
+        }
+        
+        /* Static navigation styles */
+        .nav-link {
+            text-decoration: none;
+            color: inherit;
+        }
+    </style>
+</head>
+<body>
+     
+    <div class="circuit-bg min-h-screen">
+         
+        <header class="w-full px-6 py-6">
+            <div class="max-w-7xl mx-auto flex items-center justify-between">
+                 
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full border-2 border-blue-400 flex items-center justify-center bg-blue-400/10">
+                        <span class="text-blue-400 font-bold text-lg">Rx</span>
+                    </div>
+                    <span class="text-white text-xl font-semibold">Studio360</span>
+                </div>
+
+                 
+                <nav class="hidden md:flex items-center gap-8 bg-slate-800/80 backdrop-blur-sm rounded-full px-8 py-3">
+                    <a href="#" class="nav-link text-white font-medium">HOME</a>
+                    <a href="#" class="nav-link text-slate-300 font-medium">ABOUT</a>
+                    <a href="#" class="nav-link text-slate-300 font-medium">TOOLS</a>
+                    <a href="#" class="nav-link text-slate-300 font-medium">SOCIALS</a>
+                </nav>
+
+                <a href="/login.html">
+                <button class="btn-primary hidden md:block px-6 py-3 rounded-lg font-medium">
+                    LOG IN
+                </button>
+            </a>
+                 
+                <button class="md:hidden text-white">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+         
+        <section class="flex flex-col items-center justify-center px-6 py-20">
+            <div class="max-w-5xl mx-auto text-center">
+                 
+                <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-8 leading-tight">
+                    START YOUR JOURNEY FROM<br>
+                    MOLECULE TO MARKET
+                </h1>
+
+                 
+                <p class="text-lg md:text-xl text-slate-300 font-bold text-white text-4xl max-w-4xl mx-auto mb-12 leading-relaxed">
+                    Pakistan's first AI-powered simulator that integrates drug formulation, 
+                    PK/PD modeling, ADME prediction, 3D dosage visualization, and 
+                    packaging design into a single web-based platform
+                </p>
+
+   
+  
+  <!-- ✅ BUTTONS WITHOUT DARK BOX -->
+<div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+  
+  <!-- GET STARTED with light-blue glow -->
+  <div class="relative">
+
+    
+    <div class="absolute inset-0 bg-blue-400/30 rounded-lg blur-lg"></div>
+    <a href="/signup.html">
+        <button class="btn-primary relative px-8 py-4 text-lg font-medium rounded-lg min-w-[180px] z-10">
+      GET STARTED
+    </button>
+</a>
+  </div>
+
+  <!-- START TRIAL normal -->
+<a href="/signup.html">
+      <button class="btn-outline px-8 py-4 bg-black ext-lg font-medium rounded-lg min-w-[180px]">
+    START TRIAL
+  </button>
+</a>
+</div>
+
+
+
+            </div>
+        </section>
+    </div>
+</body>
+</html>

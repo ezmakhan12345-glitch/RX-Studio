@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PK Graph + Drug Properties</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 35px;
+      background: url('/circuitpattern.png');
+      background-size: cover;
+    }
+
+    h1{
+        position: absolute;
+        left: 5%;
+        color: white;
+    }
+
+    h2 {
+      margin-bottom: 15px;
+      color: white;
+    }
+
+    label{
+      color: white;
+    }
+
+    .section {
+      margin-bottom: 30px;
+    }
+
+    /* Drug Properties Section */
+    .drug-properties-container {
+      width: 100%;
+      background: rgba(5, 5, 159, 0.752);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      /* padding: 20px; */
+    }
+
+    .drug-properties-header {
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap:10px;
+    }
+
+    .properties-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 15px;
+    }
+
+    .property-card {
+      background: #f1f5f9;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .property-card h4 {
+      margin: 0 0 8px;
+      color: #2563eb;
+      font-size: 16px;
+    }
+
+    .property-card p {
+      margin: 0;
+      font-size: 14px;
+      color: #374151;
+    }
+
+    /* Controls + Chart Section */
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 400px;
+      margin-bottom: 20px;
+    }
+
+    .chart-container {
+      position: relative;
+      width: 100%;
+      height: 65vh;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      padding: 10px;
+    }
+
+    select {
+      padding: 6px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    @media (max-width:1200px) {
+      
+    h1{
+      font-size: medium;
+      margin-bottom: 100px;
+      margin-left: 50px;
+    }
+    }
+
+  </style>
+</head>
+
+<body>
+  <!-- Drug Properties Section -->
+   
+  <h1> ADME Module Simulation </h1>
+  <div class="section drug-properties-container">
+    <div class="drug-properties-header">
+    
+      <h2>Drug Properties</h2>
+      <label>
+        Select Drug:
+        <select id="drugPropsSelect">
+          <option value="">-- Select --</option>
+          <option value="clozapine">Clozapine</option>
+          <option value="metoclopramide">Metoclopramide</option>
+          <option value="atorvastatin">Atorvastatin</option>
+        </select>
+      </label>
+    </div>
+    <div id="propertiesGrid" class="properties-grid">
+      <!-- Properties will be displayed here -->
+    </div>
+  </div>
+
+  <!-- PK Graph Section -->
+  <div class="section">
+    <h2>Pharmacokinetic Graph</h2>
+    <div class="controls">
+      <label>
+        Select Drug:
+        <select id="drugSelect">
+          <option value="">-- Select --</option>
+          <option value="atorvastatin">Atorvastatin</option>
+          <option value="clozapine">Clozapine</option>
+          <option value="metoclopramide">Metoclopramide</option>
+        </select>
+      </label>
+      <label>
+        Select Dosage Form:
+        <select id="formSelect">
+          <option value="">-- Select --</option>
+        </select>
+      </label>
+    </div>
+    <div class="chart-container">
+      <canvas id="pkChart"></canvas>
+    </div>
+  </div>
+
+  <script>
+    /* --- DRUG PROPERTIES --- */
+    const propertiesData = {
+      clozapine: [
+        { title: "pKa", value: "7.5" },
+        { title: "LogP", value: "3.5" },
+        { title: "Solubility (Aqueous)", value: "0.186 mg/mL" },
+        { title: "Solubility (Patch)", value: "2.755 mg/mL" },
+        { title: "Molecular Weight", value: "326.832 g/mol" }
+      ],
+      metoclopramide: [
+        { title: "pKa", value: "9.71" },
+        { title: "LogP", value: "2.66" },
+        { title: "Solubility (Aqueous)", value: "50 mg/mL" },
+        { title: "Solubility (Patch)", value: "15 mg/mL" },
+        { title: "Molecular Weight", value: "299.79 g/mol" }
+      ],
+      atorvastatin: [
+        { title: "pKa", value: "4.71" },
+        { title: "LogP", value: "4.434" },
+        { title: "Solubility (Aqueous)", value: "0.1 mg/mL" },
+        { title: "Solubility (Patch)", value: "8 mg/mL" },
+        { title: "Molecular Weight", value: "558.65 g/mol" }
+      ]
+    };
+
+    document.getElementById("drugPropsSelect").addEventListener("change", function () {
+      const selected = this.value;
+      const grid = document.getElementById("propertiesGrid");
+      grid.innerHTML = "";
+      if (propertiesData[selected]) {
+        propertiesData[selected].forEach(prop => {
+          const card = document.createElement("div");
+          card.className = "property-card";
+          card.innerHTML = `<h4>${prop.title}</h4><p>${prop.value}</p>`;
+          grid.appendChild(card);
+        });
+      }
+    });
+
+    /* --- PK GRAPH --- */
+    let chart;
+
+    function generateCurve(Tmax, points = 100) {
+      const data = [];
+      for (let t = 0; t <= 48; t += 48 / points) {
+        let conc = (t / Tmax) * Math.exp(1 - t / Tmax);
+        if (conc < 0 || !isFinite(conc)) conc = 0;
+        data.push({ x: t, y: conc });
+      }
+      return data;
+    }
+
+    function scaleCurveToCmax(curve, Cmax) {
+      const currentMax = Math.max(...curve.map(p => p.y));
+      const factor = Cmax / currentMax;
+      return curve.map(p => ({ x: p.x, y: p.y * factor }));
+    }
+
+    function updateChart(Cmax, Tmax, targetAUC, yMin, yMax) {
+      let pk = generateCurve(Tmax);
+      pk = scaleCurveToCmax(pk, Cmax);
+
+      const xMax = 48;
+
+      const datasets = [
+        {
+          label: `AUC = ${targetAUC} ng·h/mL`,
+          data: pk,
+          fill: true,
+          backgroundColor: "rgba(37,99,235,0.25)",
+          borderColor: "rgba(0,0,0,0)",
+          tension: 0.3,
+          pointRadius: 0
+        },
+        {
+          label: "Plasma Conc.",
+          data: pk,
+          borderColor: "#2563eb",
+          borderWidth: 2,
+          fill: false,
+          tension: 0.3,
+          pointRadius: 0
+        },
+        {
+          label: `Cmax = ${Cmax} ng/mL`,
+          data: [{ x: 0, y: Cmax }, { x: xMax, y: Cmax }],
+          borderColor: "#dc2626",
+          borderDash: [6, 6],
+          borderWidth: 2,
+          showLine: true,
+          pointRadius: 0
+        },
+        {
+          label: `Tmax = ${Tmax} h`,
+          data: [{ x: Tmax, y: yMin }, { x: Tmax, y: Cmax }],
+          borderColor: "#16a34a",
+          borderDash: [6, 6],
+          borderWidth: 2,
+          showLine: true,
+          pointRadius: 0
+        }
+      ];
+
+      if (chart) chart.destroy();
+      chart = new Chart(document.getElementById("pkChart"), {
+        type: "line",
+        data: { datasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: "top" } },
+          scales: {
+            x: {
+              type: "linear",
+              min: 0,
+              max: xMax,
+              title: { display: true, text: "Time (hours)" }
+            },
+            y: {
+              min: yMin,
+              max: yMax,
+              title: { display: true, text: "Plasma Conc. (ng/mL)" }
+            }
+          }
+        }
+      });
+    }
+
+    document.getElementById("drugSelect").addEventListener("change", function () {
+      const formSelect = document.getElementById("formSelect");
+      formSelect.innerHTML = '<option value="">-- Select --</option>';
+      if (this.value === "atorvastatin") {
+        ["oral","transdermal"].forEach(f => {
+          const opt = document.createElement("option");
+          opt.value = f;
+          opt.textContent = f.charAt(0).toUpperCase() + f.slice(1);
+          formSelect.appendChild(opt);
+        });
+      } else if (this.value === "clozapine") {
+        ["oral","transdermal"].forEach(f => {
+          const opt = document.createElement("option");
+          opt.value = f;
+          opt.textContent = f.charAt(0).toUpperCase() + f.slice(1);
+          formSelect.appendChild(opt);
+        });
+      } else if (this.value === "metoclopramide") {
+        ["oral","transdermal"].forEach(f => {
+          const opt = document.createElement("option");
+          opt.value = f;
+          opt.textContent = f.charAt(0).toUpperCase() + f.slice(1);
+          formSelect.appendChild(opt);
+        });
+      }
+    });
+
+    document.getElementById("formSelect").addEventListener("change", function () {
+      const drug = document.getElementById("drugSelect").value;
+      const form = this.value;
+
+      if (drug === "atorvastatin") {
+        if (form === "oral") updateChart(23, 4, 1000, 5, 30);
+        else if (form === "transdermal") updateChart(35, 24, 700, 10, 100);
+      }
+
+      if (drug === "clozapine") {
+        if (form === "oral") updateChart(50.23, 5, 945.46, 5, 60);
+        else if (form === "transdermal") updateChart(38, 28, 1175, 10, 60);
+      }
+
+      if (drug === "metoclopramide") {
+        if (form === "oral") updateChart(34.5, 1.5, 274, 5, 50);
+        else if (form === "transdermal") updateChart(42, 6, 574, 5, 60);
+      }
+    });
+  </script>
+</body>
+</html>
